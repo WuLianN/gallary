@@ -68,6 +68,7 @@ async function touchEnd(e) {
   const { clientX: endClientX } = e.changedTouches[0]
   const zoom = document.querySelector('.medium-zoom-image--opened')
   if (endClientX - startClienX > 50) {
+    // 往右滑，加载左边的图片
     if (currentIndex !== 0) {
       currentIndex--
       const imageUrl = list.value[currentIndex].url
@@ -75,23 +76,27 @@ async function touchEnd(e) {
       zoom.setAttribute('src', imageUrl)
     }
   } else if (endClientX - startClienX < -50) {
+    // 往左滑，加载右边的图片
     if (currentIndex !== list.value.length) {
       currentIndex++
-      const imageUrl = list.value[currentIndex].url
+      let imageUrl
+
+      // 滑动加载更多图片
+      if (currentIndex === list.value.length) {
+        listQuery.page++
+
+        const data = await getPictureList(listQuery)
+        if (data.length === 0) {
+          console.log('not more')
+        } else {
+          list.value.push(...data)
+          imageUrl = list.value[currentIndex].url
+        }
+      } else {
+        imageUrl = list.value[currentIndex].url
+      }
 
       zoom.setAttribute('src', imageUrl)
-    }
-
-    // 滑动加载更多图片
-    if (currentIndex === list.value.length) {
-      listQuery.page++
-
-      const data = await getPictureList(listQuery)
-      if (data.length === 0) {
-        console.log('not more')
-      } else {
-        list.value.push(...data)
-      }
     }
   }
 }
@@ -141,7 +146,6 @@ watch(
 watch(
   () => hasOpenImg.value,
   () => {
-    console.log(hasOpenImg.value)
     if (hasOpenImg.value) {
       window.addEventListener('touchstart', touchStart)
       window.addEventListener('touchend', touchEnd)
