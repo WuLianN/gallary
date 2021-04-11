@@ -4,7 +4,7 @@
       class="gallary-img-wrapper"
       v-for="(item, index) in list"
       :key="item.id"
-      @click="openSlide"
+      @click="getCurrentIndex(index)"
     >
       <img class="gallary-img" @error="error(index)" :src="item.url" alt="" />
     </div>
@@ -24,14 +24,7 @@
 <script setup>
 import mediumZoom from 'medium-zoom'
 import _ from 'lodash'
-import {
-  ref,
-  watch,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-  getCurrentInstance,
-} from 'vue'
+import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { pictureList } from '@/api/beauty'
 
 async function getPictureList(listQuery) {
@@ -62,12 +55,33 @@ function error(index) {
   list.value.splice(index, 1)
 }
 
-function openSlide() {
-  // nextTick(() => {
-  //   if (document.querySelector('.medium-zoom-overlay') !== null) {
-  //     hasOpenImg = true
-  //   }
-  // })
+function touchStart(e) {
+  const { clientX } = e.changedTouches[0]
+  startClienX = clientX
+}
+
+function touchEnd(e) {
+  const { clientX: endClientX } = e.changedTouches[0]
+  const zoom = document.querySelector('.medium-zoom-image--opened')
+  if (endClientX - startClienX > 50) {
+    if (currentIndex !== 0) {
+      currentIndex--
+      const imageUrl = list.value[currentIndex].url
+
+      zoom.setAttribute('src', imageUrl)
+    }
+  } else if (endClientX - startClienX < -50) {
+    if (currentIndex !== list.value.length) {
+      currentIndex++
+      const imageUrl = list.value[currentIndex].url
+
+      zoom.setAttribute('src', imageUrl)
+    }
+  }
+}
+
+function getCurrentIndex(index) {
+  currentIndex = index
 }
 
 const listQuery = {
@@ -76,9 +90,10 @@ const listQuery = {
 }
 
 const list = ref([])
-
+let hasOpenImg = ref(false)
 let debounce
-let hasOpenImg = false
+let startClienX
+let currentIndex
 
 const getList = async () => {
   list.value = await getPictureList(listQuery)
@@ -88,7 +103,7 @@ watch(
   () => [...list.value],
   () => {
     nextTick(() => {
-      mediumZoom(
+      const zoom = mediumZoom(
         Array.from(document.querySelectorAll('.gallary-img')).filter(
           (img) => !img.classList.contains('medium-zoom-image')
         ),
@@ -97,7 +112,31 @@ watch(
           background: 'rgba(0, 0, 0, .85)',
         }
       )
+
+      zoom.on('close', () => {
+        // console.log('close')
+        hasOpenImg.value = false
+      })
+
+      zoom.on('open', () => {
+        // console.log('open')
+        hasOpenImg.value = true
+      })
     })
+  }
+)
+
+watch(
+  () => hasOpenImg.value,
+  () => {
+    console.log(hasOpenImg.value)
+    if (hasOpenImg.value) {
+      window.addEventListener('touchstart', touchStart)
+      window.addEventListener('touchend', touchEnd)
+    } else {
+      window.removeEventListener('touchstart', touchStart)
+      window.removeEventListener('touchend', touchEnd)
+    }
   }
 )
 
@@ -105,15 +144,12 @@ onMounted(() => {
   // 获取图片列表
   getList()
 
-  console.log(getCurrentInstance())
-
   debounce = _.debounce(handleScroll, 100, {
     leading: false,
     trailing: true,
   })
 
   window.addEventListener('scroll', debounce)
-  // document.querySelector('.gallary').addEventListener('scroll', debounce)
 })
 
 onBeforeUnmount(() => {
