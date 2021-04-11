@@ -33,6 +33,10 @@ async function getPictureList(listQuery) {
   return res.list
 }
 
+async function getList() {
+  list.value = await getPictureList(listQuery)
+}
+
 async function handleScroll() {
   const scrollTop = Math.floor(document.documentElement.scrollTop)
   const scrollHeight = Math.floor(document.documentElement.scrollHeight)
@@ -60,7 +64,7 @@ function touchStart(e) {
   startClienX = clientX
 }
 
-function touchEnd(e) {
+async function touchEnd(e) {
   const { clientX: endClientX } = e.changedTouches[0]
   const zoom = document.querySelector('.medium-zoom-image--opened')
   if (endClientX - startClienX > 50) {
@@ -76,6 +80,18 @@ function touchEnd(e) {
       const imageUrl = list.value[currentIndex].url
 
       zoom.setAttribute('src', imageUrl)
+    }
+
+    // 滑动加载更多图片
+    if (currentIndex === list.value.length) {
+      listQuery.page++
+
+      const data = await getPictureList(listQuery)
+      if (data.length === 0) {
+        console.log('not more')
+      } else {
+        list.value.push(...data)
+      }
     }
   }
 }
@@ -94,10 +110,6 @@ let hasOpenImg = ref(false)
 let debounce
 let startClienX
 let currentIndex
-
-const getList = async () => {
-  list.value = await getPictureList(listQuery)
-}
 
 watch(
   () => [...list.value],
