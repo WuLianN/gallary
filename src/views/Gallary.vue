@@ -38,9 +38,9 @@ async function getList() {
 }
 
 async function handleScroll() {
-  const scrollTop = Math.floor(document.documentElement.scrollTop)
-  const scrollHeight = Math.floor(document.documentElement.scrollHeight)
-  const clientHeight = Math.floor(document.documentElement.clientHeight)
+  const scrollTop = Math.floor(document.body.scrollTop)
+  const scrollHeight = Math.floor(document.body.scrollHeight)
+  const clientHeight = Math.floor(document.body.clientHeight)
 
   if (scrollHeight - scrollTop <= clientHeight + 10) {
     listQuery.page++
