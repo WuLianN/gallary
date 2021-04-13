@@ -9,10 +9,10 @@
       <img class="gallary-img" @error="error(index)" :src="item.url" alt="" />
     </div>
 
-    <template v-if="list.length % 4 !== 0">
+    <template v-if="list.length % rowImgSize !== 0">
       <div
         class="gallary-img-wrapper"
-        v-for="(item, index) in 4 - (list.length % 4)"
+        v-for="(item, index) in rowImgSize - (list.length % rowImgSize)"
         :key="index"
       >
         <div class="gallary-img"></div>
@@ -102,7 +102,31 @@ async function touchEnd(e) {
 }
 
 function getCurrentIndex(index) {
-  currentIndex = index
+  currentIndex = firstOpenIndex = index
+}
+
+function moveScrollBar(firstOpenIndex, currentIndex) {
+  // 计算图片的行之差
+  const firstRowNum = Math.floor(firstOpenIndex / rowImgSize)
+  const currentRowNum = Math.floor(currentIndex / rowImgSize)
+  const rowDifferentAbs = Math.abs(currentRowNum - firstRowNum)
+  // 判断方向
+  const different = currentIndex - firstOpenIndex
+
+  // 行之差 >= 1，即换行了 
+  if (rowDifferentAbs >= 1) {
+    const imgHeight = document.querySelector('.gallary-img').height
+    const padding = 5
+    const totalHeight = imgHeight + padding
+    const scrollHeight = totalHeight * rowDifferentAbs
+    const currentScrollY = window.scrollY
+
+    if (different > 0) {
+      window.scrollTo(0, currentScrollY + scrollHeight)
+    } else if (different < 0) {
+      window.scrollTo(0, currentScrollY - scrollHeight)
+    }
+  }
 }
 
 const listQuery = {
@@ -111,10 +135,11 @@ const listQuery = {
 }
 
 const list = ref([])
+const rowImgSize = 4 // 一行的图片数量
 let hasOpenImg = ref(false)
 let debounce
 let startClienX
-let currentIndex
+let firstOpenIndex, currentIndex
 
 watch(
   () => [...list.value],
@@ -131,12 +156,13 @@ watch(
       )
 
       zoom.on('close', () => {
-        // console.log('close')
         hasOpenImg.value = false
+
+        // 计算 firstOpenIndex 与 currentIndex 的差，来校正位置
+        moveScrollBar(firstOpenIndex, currentIndex)
       })
 
       zoom.on('open', () => {
-        // console.log('open')
         hasOpenImg.value = true
       })
     })
@@ -176,17 +202,17 @@ onBeforeUnmount(() => {
 <style scoped>
 .gallary {
   width: 100vw;
-  padding: 1.6vw 0 0 0;
+  padding: 5px 0 0 0;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
 }
 
 .gallary-img-wrapper {
-  width: 23vw;
-  height: 23vw;
+  width: 87px;
+  height: 87px;
   position: relative;
-  padding: 0 0 1.6vw 0;
+  padding: 0 0 5px 0;
 }
 
 .gallary-img {
