@@ -2,9 +2,7 @@
 
 ### display
 
-<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/display-1.jpg">
-<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/display-2.gif">
-<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/display-3.gif">
+<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/display.gif">
 
 ### 技术栈
 

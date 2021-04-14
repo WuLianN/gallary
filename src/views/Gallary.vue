@@ -1,7 +1,7 @@
 <template>
   <div class="gallary">
     <div
-      class="gallary-img-wrapper"
+      class="gallary-img-wrapper gallary-img-special"
       v-for="(item, index) in list"
       :key="item.id"
       @click="getCurrentIndex(index)"
@@ -113,7 +113,7 @@ function moveScrollBar(firstOpenIndex, currentIndex) {
   // 判断方向
   const different = currentIndex - firstOpenIndex
 
-  // 行之差 >= 1，即换行了 
+  // 行之差 >= 1，即换行了
   if (rowDifferentAbs >= 1) {
     const imgHeight = document.querySelector('.gallary-img').height
     const padding = 5
@@ -129,17 +129,58 @@ function moveScrollBar(firstOpenIndex, currentIndex) {
   }
 }
 
+function handleSelected() {
+  const firstOpenImg = document.querySelectorAll('.gallary-img-special')[
+    firstOpenIndex
+  ]
+  const currentImg = document.querySelectorAll('.gallary-img-special')[
+    currentIndex
+  ]
+
+  // 滑动 切换选中效果
+  if (firstOpenIndex !== currentIndex) {
+    firstOpenImg.classList.remove('selected')
+    currentImg.classList.add('selected')
+  }
+
+  // 点击 - 关闭 - 点击 -> 移除选中效果
+  if (previousIndex !== firstOpenIndex) {
+    if (previousIndex >= 0) {
+      const previousImg = document.querySelectorAll('.gallary-img-special')[
+        previousIndex
+      ]
+      previousImg.classList.remove('selected')
+    }
+
+    previousIndex = firstOpenIndex
+  }
+
+  // 滑动 -> 移除选中效果
+  if (previousIndex !== currentIndex) {
+    if (previousIndex >= 0) {
+      const previousImg = document.querySelectorAll('.gallary-img-special')[
+        previousIndex
+      ]
+      previousImg.classList.remove('selected')
+    }
+
+    previousIndex = currentIndex
+  }
+}
+
 const listQuery = {
   page: 1,
   limit: 30,
 }
 
-const list = ref([])
+const list = ref([]) // 图片列表
 const rowImgSize = 4 // 一行的图片数量
 let hasOpenImg = ref(false)
 let debounce
 let startClienX
-let firstOpenIndex, currentIndex
+let firstOpenIndex // 点击放大当前图片的索引
+let currentIndex // 左右滑动，控制 currentIndex 的变化
+let previousIndex = -1 // 移除上一个选中效果
 
 watch(
   () => [...list.value],
@@ -160,10 +201,18 @@ watch(
 
         // 计算 firstOpenIndex 与 currentIndex 的差，来校正位置
         moveScrollBar(firstOpenIndex, currentIndex)
+
+        // 添加/移除/切换 选中效果
+        handleSelected()
       })
 
       zoom.on('open', () => {
         hasOpenImg.value = true
+        const img = document.querySelectorAll('.gallary-img-special')[
+          firstOpenIndex
+        ]
+
+        img.classList.add('selected')
       })
     })
   }
@@ -212,11 +261,16 @@ onBeforeUnmount(() => {
   width: 87px;
   height: 87px;
   position: relative;
-  padding: 0 0 5px 0;
+  margin: 0 0 5px 0;
 }
 
 .gallary-img {
   width: 100%;
   height: 100%;
+}
+
+.selected {
+  border: 1px solid red;
+  box-shadow: 0 0 5px red;
 }
 </style>
