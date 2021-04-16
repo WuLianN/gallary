@@ -6,7 +6,12 @@
       :key="item.id"
       @click="getCurrentIndex(index)"
     >
-      <img class="gallary-img" @error="error(index)" :src="item.url" alt="" />
+      <img
+        class="gallary-img"
+        @error="error(index)"
+        :data-src="item.url"
+        alt=""
+      />
     </div>
 
     <template v-if="list.length % rowImgSize !== 0">
@@ -14,9 +19,7 @@
         class="gallary-img-wrapper"
         v-for="(item, index) in rowImgSize - (list.length % rowImgSize)"
         :key="index"
-      >
-        <div class="gallary-img"></div>
-      </div>
+      ></div>
     </template>
   </div>
 </template>
@@ -168,6 +171,30 @@ function handleSelected() {
   }
 }
 
+function lazyLoad() {
+  const options = {
+    // root: document.querySelector('#app'),
+    rootMargin: '0px',
+    threshold: 0.25,
+  }
+
+  const callback = (entries) => {
+    entries.forEach((ele) => {
+      if (ele.intersectionRatio > 0 && ele.intersectionRatio <= 1) {
+        ele.target.src = ele.target.dataset.src
+      }
+    })
+  }
+
+  const observer = new IntersectionObserver(callback, options)
+
+  const target = document.querySelectorAll('.gallary-img')
+
+  Array.from(target).forEach((item) => {
+    observer.observe(item)
+  })
+}
+
 const listQuery = {
   page: 1,
   limit: 30,
@@ -214,6 +241,9 @@ watch(
 
         img.classList.add('selected')
       })
+
+      // 开启图片懒加载
+      lazyLoad()
     })
   }
 )
@@ -255,6 +285,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
+  align-content: flex-start;
 }
 
 .gallary-img-wrapper {
