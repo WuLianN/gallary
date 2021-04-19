@@ -41,6 +41,7 @@ const getList = async (listQuery) => {
 }
 
 const handleScroll = async () => {
+  console.log(1)
   const scrollTop = Math.floor(document.querySelector('#app').scrollTop)
   const scrollHeight = Math.floor(document.querySelector('#app').scrollHeight)
   const clientHeight = Math.floor(document.querySelector('#app').clientHeight)
