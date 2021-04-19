@@ -2,7 +2,8 @@
 
 ### display
 
-<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/display.gif">
+<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/images.gif">
+<img width="375" height="667" src="https://github.com/WuLianN/gallary/blob/master/public/display/videos.gif">
 
 ### 技术栈
 

@@ -7,6 +7,7 @@
         :ref="setVideoRef"
         class="video"
         :height="videoHeight"
+        controls
       ></video>
     </div>
   </div>
@@ -31,15 +32,9 @@ const videoData = ref([
   { name: 1, url: '/video/1.mp4' },
   { name: 2, url: '/video/2.mp4' },
   { name: 3, url: '/video/3.mp4' },
-  { name: 4, url: '/video/1.mp4' },
-  { name: 5, url: '/video/2.mp4' },
-  { name: 6, url: '/video/3.mp4' },
-  { name: 7, url: '/video/1.mp4' },
-  { name: 8, url: '/video/2.mp4' },
-  { name: 9, url: '/video/3.mp4' },
-  { name: 10, url: '/video/1.mp4' },
-  { name: 11, url: '/video/2.mp4' },
-  { name: 12, url: '/video/3.mp4' },
+  { name: 4, url: '/video/4.mkv' },
+  { name: 5, url: '/video/5.mkv' },
+  { name: 6, url: '/video/6.mkv' },
 ])
 
 const getTouchStart = (e) => {
@@ -66,7 +61,6 @@ const getTouchEnd = (e) => {
   //   direction = 'up'
   //   autoplay()
   // }
-  
 
   // 惯性滚动结束后，再计算intersectionRatio
   document
@@ -154,7 +148,7 @@ onBeforeUnmount(() => {
 
 .video-wrapper {
   height: 200px;
-  padding: 0 0 5px 0;
+  margin: 0 0 30px 0;
 }
 
 .video {
