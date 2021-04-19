@@ -30,17 +30,17 @@ import _ from 'lodash'
 import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { pictureList } from '@/api/beauty'
 
-async function getPictureList(listQuery) {
+const getPictureList = async (listQuery) => {
   const { page, limit } = listQuery
   const res = await pictureList(page, limit)
   return res.list
 }
 
-async function getList() {
+const getList = async (listQuery) => {
   list.value = await getPictureList(listQuery)
 }
 
-async function handleScroll() {
+const handleScroll = async () => {
   const scrollTop = Math.floor(document.querySelector('#app').scrollTop)
   const scrollHeight = Math.floor(document.querySelector('#app').scrollHeight)
   const clientHeight = Math.floor(document.querySelector('#app').clientHeight)
@@ -57,17 +57,17 @@ async function handleScroll() {
   }
 }
 
-function error(index) {
+const error = (index) => {
   // 移除不能加载的图片
   list.value.splice(index, 1)
 }
 
-function touchStart(e) {
+const touchStart = (e) => {
   const { clientX } = e.changedTouches[0]
   startClienX = clientX
 }
 
-async function touchEnd(e) {
+const touchEnd = async (e) => {
   const { clientX: endClientX } = e.changedTouches[0]
   const zoom = document.querySelector('.medium-zoom-image--opened')
   if (endClientX - startClienX > 50) {
@@ -104,11 +104,11 @@ async function touchEnd(e) {
   }
 }
 
-function getCurrentIndex(index) {
+const getCurrentIndex = (index) => {
   currentIndex = firstOpenIndex = index
 }
 
-function moveScrollBar(firstOpenIndex, currentIndex) {
+const moveScrollBar = (firstOpenIndex, currentIndex) => {
   // 计算图片的行之差
   const firstRowNum = Math.floor(firstOpenIndex / rowImgSize)
   const currentRowNum = Math.floor(currentIndex / rowImgSize)
@@ -132,7 +132,7 @@ function moveScrollBar(firstOpenIndex, currentIndex) {
   }
 }
 
-function handleSelected() {
+const handleSelected = () => {
   const firstOpenImg = document.querySelectorAll('.gallary-img-special')[
     firstOpenIndex
   ]
@@ -171,7 +171,7 @@ function handleSelected() {
   }
 }
 
-function lazyLoad() {
+const lazyLoad = () => {
   const options = {
     root: document.querySelector('#app'),
     rootMargin: '0px',
@@ -263,7 +263,7 @@ watch(
 
 onMounted(() => {
   // 获取图片列表
-  getList()
+  getList(listQuery)
 
   debounce = _.debounce(handleScroll, 100, {
     leading: false,

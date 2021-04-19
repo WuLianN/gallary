@@ -19,24 +19,12 @@
 - [x] 滑动加载更多图片
 - [x] 关闭放大状态后，检测滑动状态，若滑动了，滚动到当前图片位置
 - [x] 图片懒加载
-- [ ] 放大状态下，可以再缩放图片
 
 <br>
 
-**待优化**
+### 知识点
 
-图片在放大的状态下，想再放大 :heart_eyes: ，只能缩放浏览器，手势很容易被认为滑动。
+[Intersection Observer](https://developer.mozilla.org/zh-CN/docs/Web/API/IntersectionObserver)
 
-解决方案：在图片放大状态下，先用手势（如双击），取消滑动监听。
-
-<br>
-
-**坑**
-
-```js
-// 移动端一直为0，pc端可以识别
-document.documentElement.scrollTop
-
-// 更换为获取 body 的 scrollTop
-document.body.scrollTop
-```
+- 图片懒加载
+- 视频自动播放
