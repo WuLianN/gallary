@@ -41,10 +41,15 @@ const getList = async (listQuery) => {
 }
 
 const handleScroll = async () => {
-  console.log(1)
-  const scrollTop = Math.floor(document.querySelector('#app').scrollTop)
-  const scrollHeight = Math.floor(document.querySelector('#app').scrollHeight)
-  const clientHeight = Math.floor(document.querySelector('#app').clientHeight)
+  const scrollTop = Math.floor(document.querySelector('.gallary').scrollTop)
+  const scrollHeight = Math.floor(
+    document.querySelector('.gallary').scrollHeight
+  )
+  const clientHeight = Math.floor(
+    document.querySelector('.gallary').clientHeight
+  )
+
+  console.log(scrollTop, scrollHeight, clientHeight)
 
   if (scrollHeight - scrollTop <= clientHeight + 10) {
     listQuery.page++
@@ -125,10 +130,12 @@ const moveScrollBar = (firstOpenIndex, currentIndex) => {
     const scrollHeight = totalHeight * rowDifferentAbs
     const currentScrollY = window.scrollY
 
+    const gallaryDom = document.querySelector('.gallary')
+
     if (different > 0) {
-      window.scrollTo(0, currentScrollY + scrollHeight)
+      gallaryDom.scrollTo(0, currentScrollY + scrollHeight)
     } else if (different < 0) {
-      window.scrollTo(0, currentScrollY - scrollHeight)
+      gallaryDom.scrollTo(0, currentScrollY - scrollHeight)
     }
   }
 }
@@ -174,7 +181,7 @@ const handleSelected = () => {
 
 const lazyLoad = () => {
   const options = {
-    root: document.querySelector('#app'),
+    root: document.querySelector('.gallary'),
     rootMargin: '0px',
     threshold: 0.25,
   }
@@ -271,12 +278,12 @@ onMounted(() => {
     trailing: true,
   })
 
-  const dom = document.querySelector('#app')
+  const dom = document.querySelector('.gallary')
   dom.addEventListener('scroll', debounce)
 })
 
 onBeforeUnmount(() => {
-  const dom = document.querySelector('#app')
+  const dom = document.querySelector('.gallary')
   dom.removeEventListener('scroll', debounce)
 })
 </script>
@@ -284,6 +291,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .gallary {
   width: 100vw;
+  height: 100vh;
+  overflow: scroll;
   padding: 5px 0 0 0;
   display: flex;
   flex-flow: row wrap;
