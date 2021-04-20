@@ -2,8 +2,8 @@
 
 ### display
 
-<img width="360" height="360" src="https://github.com/WuLianN/gallary/blob/master/public/display/images.gif">
-<img width="360" height="360" src="https://github.com/WuLianN/gallary/blob/master/public/display/videos.gif">
+<img width="360" height="640" src="https://github.com/WuLianN/gallary/blob/master/public/display/images.gif">
+<img width="360" height="640" src="https://github.com/WuLianN/gallary/blob/master/public/display/videos.gif">
 
 ### 技术栈
 
