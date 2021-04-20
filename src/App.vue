@@ -1,10 +1,7 @@
 <template>
-  <div class="nav" v-show="hasGo">
-    <!-- <router-link to="/images">图片</router-link>
-    <router-link to="/videos">视频</router-link> -->
-
-    <div @click="goImages">图片</div>
-    <div @click="goVideos">视频</div>
+  <div class="nav" v-show="hasRouted">
+    <router-link to="/images">图片</router-link>
+    <router-link to="/videos">视频</router-link>
   </div>
 
   <router-view></router-view>
@@ -15,21 +12,15 @@
 // Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
 
-let hasGo = ref(true)
-const goImages = () => {
-  hasGo.value = false
-  router.push({
-    path: '/images',
-  })
-}
-const goVideos = () => {
-  hasGo.value = false
-  router.push({
-    path: '/videos',
-  })
-}
+const router = useRouter()
+let hasRouted = ref(true)
+
+router.beforeEach((to, from) => {
+  if (to.path !== from.path) {
+    hasRouted.value = false
+  }
+})
 </script>
 
 <style>
